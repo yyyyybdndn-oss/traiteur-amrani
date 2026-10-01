@@ -1,0 +1,28 @@
+kind = "web"
+previewPath = "/"
+title = "Traiteur Amrani"
+description = "A bilingual Arabic and French website showcasing Traiteur Amrani's wedding catering, Moroccan dishes, event services, photo gallery, videos, and direct contact options in Tangier."
+version = "1.0.0"
+id = "artifacts/traiteur-amrani"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 19488
+
+[services.development]
+run = "pnpm --filter @workspace/traiteur-amrani run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/traiteur-amrani", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/traiteur-amrani/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "19488"
+BASE_PATH = "/"
