@@ -1,0 +1,1 @@
+- [Quote pricing constraint](quote-pricing.md) — keep quote intake estimate-free until the business supplies approved rates.
