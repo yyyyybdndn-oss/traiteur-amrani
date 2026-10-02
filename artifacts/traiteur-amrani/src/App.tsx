@@ -1,16 +1,19 @@
 import { useEffect, useState, type FormEvent } from 'react';
-import { ArrowDown, ArrowRight, ArrowUpRight, Check, ChevronLeft, ChevronRight, MapPin, Menu, Phone, Play, X } from 'lucide-react';
-import { SiApplepay, SiMastercard, SiPaypal, SiStripe, SiVisa } from 'react-icons/si';
+import { ArrowDown, ArrowRight, ArrowUpRight, Check, ChevronLeft, ChevronRight, Instagram, MapPin, Menu, Phone, Play, X } from 'lucide-react';
+import { SiApplepay, SiPaypal, SiStripe, SiVisa } from 'react-icons/si';
 
 type Language = 'fr' | 'ar';
 type QuantityUnit = 'guests' | 'tables';
 type ServiceType = 'hospitality' | 'decor' | 'food' | 'complete';
 type QuoteFields = {
+  fullName: string;
+  phone: string;
   eventDate: string;
   quantity: string;
   quantityUnit: QuantityUnit;
   service: ServiceType;
   location: string;
+  notes: string;
 };
 
 function localDateString() {
@@ -84,6 +87,7 @@ const copy = {
     follow: 'Suivre les coulisses',
     facebook: 'Facebook · Imad Amrani',
     snapchat: 'Snapchat',
+    instagram: 'Instagram · Traiteur Amrani',
     footerLine: 'Traiteur Amrani · L’art de recevoir à Tanger',
     backTop: 'Retour en haut',
     footerMark: 'HOSPITALITÉ · TANGER',
@@ -97,6 +101,8 @@ const copy = {
     quoteTitle: <>Parlons de votre<br /><em>prochaine fête.</em></>,
     quoteIntro: 'Indiquez-nous l’essentiel : nous préparerons une proposition personnalisée, sans prix estimé à l’aveugle.',
     quoteDate: 'Date de l’événement',
+    quoteFullName: 'Nom complet',
+    quotePhone: 'Numéro de téléphone',
     quoteQuantity: 'Nombre de convives ou de tables',
     quoteGuests: 'Convives',
     quoteTables: 'Tables',
@@ -109,6 +115,8 @@ const copy = {
     ],
     quoteLocation: 'Ville ou lieu de réception',
     quoteLocationPlaceholder: 'Ex. Tanger, salle ou quartier',
+    quoteNotes: 'Notes particulières ou demandes',
+    quoteNotesPlaceholder: 'Allergies, menu souhaité, horaires ou autres précisions',
     quoteSubmit: 'Préparer ma demande',
     quoteReady: 'Votre demande est prête à être envoyée.',
     quoteMessageHello: 'Bonjour Traiteur Amrani, je souhaite un devis pour mon événement :',
@@ -171,6 +179,7 @@ const copy = {
     follow: 'تابعوا يومياتنا',
     facebook: 'فيسبوك · عماد العمراني',
     snapchat: 'سناب شات',
+    instagram: 'إنستغرام · تريتور العمراني',
     footerLine: 'تريتور العمراني · فن الضيافة في طنجة',
     backTop: 'العودة إلى الأعلى',
     footerMark: 'الضيافة · طنجة',
@@ -184,6 +193,8 @@ const copy = {
     quoteTitle: <>أخبرونا عن<br /><em>احتفالكم القادم.</em></>,
     quoteIntro: 'شاركوا معنا أهم التفاصيل لنعدّ لكم عرضاً يناسب مناسبتكم، دون تخمين الأسعار.',
     quoteDate: 'تاريخ الحفلة',
+    quoteFullName: 'الاسم الكامل',
+    quotePhone: 'رقم الهاتف',
     quoteQuantity: 'عدد المعازيم أو الطوابل',
     quoteGuests: 'المعازيم',
     quoteTables: 'الطوابل',
@@ -196,6 +207,8 @@ const copy = {
     ],
     quoteLocation: 'المدينة أو مكان الحفل',
     quoteLocationPlaceholder: 'مثال: طنجة، القاعة أو الحي',
+    quoteNotes: 'ملاحظات إضافية',
+    quoteNotesPlaceholder: 'الحساسية، قائمة الطعام، التوقيت أو تفاصيل أخرى',
     quoteSubmit: 'حضّروا طلب عرض الثمن',
     quoteReady: 'طلبكم جاهز للإرسال.',
     quoteMessageHello: 'السلام عليكم تريتور العمراني، أود طلب عرض ثمن لمناسبتي:',
@@ -215,11 +228,14 @@ function App() {
   const [selectedPhoto, setSelectedPhoto] = useState<number | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [quote, setQuote] = useState<QuoteFields>({
+    fullName: '',
+    phone: '',
     eventDate: '',
     quantity: '',
     quantityUnit: 'guests',
     service: 'complete',
     location: '',
+    notes: '',
   });
   const [quoteMessage, setQuoteMessage] = useState('');
   const [quoteCopied, setQuoteCopied] = useState(false);
@@ -272,10 +288,13 @@ function App() {
     const quantityLabel = quote.quantityUnit === 'guests' ? t.quoteGuests : t.quoteTables;
     setQuoteMessage([
       t.quoteMessageHello,
+      `${t.quoteFullName}: ${quote.fullName.trim()}`,
+      `${t.quotePhone}: ${quote.phone.trim()}`,
       `${t.quoteDate}: ${quote.eventDate}`,
       `${t.quoteQuantity}: ${quote.quantity} ${quantityLabel.toLowerCase()}`,
       `${t.quoteService}: ${serviceLabel}`,
       `${t.quoteLocation}: ${quote.location}`,
+      ...(quote.notes.trim() ? [`${t.quoteNotes}: ${quote.notes.trim()}`] : []),
       t.quoteMessageThanks,
     ].join('\n'));
   };
@@ -464,6 +483,7 @@ function App() {
               <div className="contact-socials" aria-label={t.socialLabel}>
                 <a href="https://www.facebook.com/share/1JEBwbjUdd/" target="_blank" rel="noopener noreferrer" className="social-link focus-ring" aria-label={t.facebook} data-testid="link-facebook"><span>f</span>{t.facebook}<ArrowUpRight size={13} aria-hidden="true" /></a>
                 <a href="https://www.snapchat.com/add/imad_armani2021" target="_blank" rel="noopener noreferrer" className="social-link focus-ring" data-testid="link-snapchat"><span className="snap-mark">S</span>{t.snapchat}<ArrowUpRight size={13} aria-hidden="true" /></a>
+                <a href="https://www.instagram.com/traiteur_amrani" target="_blank" rel="noopener noreferrer" className="social-link focus-ring" aria-label={t.instagram} data-testid="link-instagram"><Instagram size={16} aria-hidden="true" />{t.instagram}<ArrowUpRight size={13} aria-hidden="true" /></a>
               </div>
               <a className="map-link focus-ring" href="https://maps.app.goo.gl/1iEjWNspaQ9Zboz59" target="_blank" rel="noopener noreferrer" data-testid="link-google-maps"><MapPin size={15} aria-hidden="true" />{t.find}<ArrowUpRight size={13} aria-hidden="true" /></a>
             </div>
@@ -480,6 +500,16 @@ function App() {
             </div>
             <div className="quote-panel">
               <form className="quote-form" onSubmit={submitQuote} data-testid="form-quote">
+                <label className="quote-field">
+                  <span>{t.quoteFullName}</span>
+                  <input type="text" required minLength={2} maxLength={100} autoComplete="name" value={quote.fullName} onChange={(event) => updateQuote('fullName', event.target.value)} data-testid="input-full-name" />
+                </label>
+
+                <label className="quote-field">
+                  <span>{t.quotePhone}</span>
+                  <input type="tel" required minLength={7} maxLength={24} pattern="[0-9+(). -]{7,24}" autoComplete="tel" inputMode="tel" value={quote.phone} onChange={(event) => updateQuote('phone', event.target.value)} placeholder="+212 6 00 00 00 00" data-testid="input-phone-number" />
+                </label>
+
                 <label className="quote-field">
                   <span>{t.quoteDate}</span>
                   <input type="date" min={localDateString()} required value={quote.eventDate} onChange={(event) => updateQuote('eventDate', event.target.value)} data-testid="input-event-date" />
@@ -510,6 +540,11 @@ function App() {
                 <label className="quote-field">
                   <span>{t.quoteLocation}</span>
                   <input type="text" required maxLength={120} autoComplete="address-level2" value={quote.location} onChange={(event) => updateQuote('location', event.target.value)} placeholder={t.quoteLocationPlaceholder} data-testid="input-event-location" />
+                </label>
+
+                <label className="quote-field quote-notes-field">
+                  <span>{t.quoteNotes}</span>
+                  <textarea maxLength={1000} rows={4} value={quote.notes} onChange={(event) => updateQuote('notes', event.target.value)} placeholder={t.quoteNotesPlaceholder} data-testid="input-special-notes" />
                 </label>
 
                 <button type="submit" className="button button-gold quote-submit focus-ring" data-testid="button-submit-quote">
@@ -546,10 +581,10 @@ function App() {
           <span className="footer-payments-label">{t.paymentsLabel}</span>
           <div className="payment-badges">
             <span className="payment-badge payment-visa" aria-label="Visa"><SiVisa aria-hidden="true" /></span>
-            <span className="payment-badge payment-mastercard" aria-label="Mastercard"><SiMastercard aria-hidden="true" /></span>
-            <span className="payment-badge payment-applepay" aria-label="Apple Pay"><SiApplepay aria-hidden="true" /></span>
-            <span className="payment-badge payment-paypal" aria-label="PayPal"><SiPaypal aria-hidden="true" /></span>
-            <span className="payment-badge payment-stripe" aria-label="Stripe"><SiStripe aria-hidden="true" /></span>
+            <span className="payment-badge payment-mastercard" role="img" aria-label="Mastercard"><svg viewBox="0 0 48 32" aria-hidden="true"><circle cx="18" cy="16" r="12" fill="#EB001B" /><circle cx="30" cy="16" r="12" fill="#F79E1B" /></svg></span>
+            <span className="payment-badge payment-applepay" role="img" aria-label="Apple Pay"><SiApplepay aria-hidden="true" /></span>
+            <span className="payment-badge payment-paypal" role="img" aria-label="PayPal"><SiPaypal aria-hidden="true" /></span>
+            <span className="payment-badge payment-stripe" role="img" aria-label="Stripe"><SiStripe aria-hidden="true" /></span>
           </div>
         </div>
       </footer>
