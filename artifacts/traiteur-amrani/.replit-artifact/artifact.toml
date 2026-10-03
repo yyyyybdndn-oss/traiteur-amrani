@@ -17,7 +17,7 @@ run = "pnpm --filter @workspace/traiteur-amrani run dev"
 [services.production]
 build = [ "pnpm", "--filter", "@workspace/traiteur-amrani", "run", "build" ]
 serve = "static"
-publicDir = "artifacts/traiteur-amrani/dist/public"
+publicDir = "artifacts/traiteur-amrani/dist"
 
 [[services.production.rewrites]]
 from = "/*"
