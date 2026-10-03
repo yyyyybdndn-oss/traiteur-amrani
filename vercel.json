@@ -1,0 +1,5 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "buildCommand": "pnpm --filter @workspace/traiteur-amrani run build",
+  "outputDirectory": "artifacts/traiteur-amrani/dist"
+}
