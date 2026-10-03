@@ -1,1 +1,2 @@
 - [Quote pricing constraint](quote-pricing.md) — keep quote intake estimate-free until the business supplies approved rates.
+- [GitHub CLI authorization](github-cli-auth.md) — a configured GitHub remote does not guarantee shell Git credentials are available.
